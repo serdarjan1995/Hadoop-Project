@@ -2,15 +2,15 @@ package hadoop.project;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.LongWritable;
 
 public class TokenizerMapperAveragePropertyType
-        extends Mapper<Object, Text, Text, IntWritable> {
+        extends Mapper<Object, Text, Text, LongWritable> {
     public TokenizerMapperAveragePropertyType(){}
-    private IntWritable price = new IntWritable();
+    private LongWritable price = new LongWritable();
     private Text houseType = new Text();
     private String prType;
     public void map(Object key, Text value, Mapper.Context context)

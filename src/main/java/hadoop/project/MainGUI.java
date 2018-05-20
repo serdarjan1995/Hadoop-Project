@@ -4,12 +4,16 @@
  * and open the template in the editor.
  */
 package hadoop.project;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -67,6 +71,7 @@ public class MainGUI extends javax.swing.JFrame {
         jToggleButtonMostSales = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaResult = new javax.swing.JTextArea();
+        jSeparator3 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -166,29 +171,29 @@ public class MainGUI extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(43, 43, 43)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel7))
-                                .addGap(109, 109, 109)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextFieldMonthF3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextFieldYearF3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(58, 58, 58)
-                                .addComponent(jToggleButtonMostSales))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextFieldCountryF3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(258, 258, 258))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7))
+                        .addGap(109, 109, 109)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextFieldMonthF3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldYearF3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(58, 58, 58)
+                        .addComponent(jToggleButtonMostSales))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 626, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTextFieldCountryF3, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(258, 258, 258)))
                 .addGap(0, 31, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 626, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40))
+            .addComponent(jSeparator3)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,9 +238,11 @@ public class MainGUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jTextFieldMonthF3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 142, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
+                .addGap(21, 21, 21)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         pack();
@@ -250,6 +257,22 @@ public class MainGUI extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        Configuration conf = new Configuration();
+        Path path = new Path("/data/outputPropertyType/part-r-00000");
+        FileSystem fs;
+        try {
+            fs = path.getFileSystem(conf);
+            FSDataInputStream inputStream = fs.open(path);
+            //System.out.println(inputStream.available());
+            jTextAreaResult.setText(IOUtils.toString(inputStream, "UTF-8"));
+            inputStream.close();
+            fs.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_averagePriceOfTypeActionPerformed
 
     private void jToggleButtonMaxMinAvgPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonMaxMinAvgPriceActionPerformed
@@ -261,6 +284,22 @@ public class MainGUI extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        Configuration conf = new Configuration();
+        Path path = new Path("/data/outputCountryDistrictTown/part-r-00000");
+        FileSystem fs;
+        try {
+            fs = path.getFileSystem(conf);
+            FSDataInputStream inputStream = fs.open(path);
+            //System.out.println(inputStream.available());
+            jTextAreaResult.setText(IOUtils.toString(inputStream, "UTF-8"));
+            inputStream.close();
+            fs.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_jToggleButtonMaxMinAvgPriceActionPerformed
 
     private void jToggleButtonMostSalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButtonMostSalesActionPerformed
@@ -272,8 +311,23 @@ public class MainGUI extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Finish");
-        //jToggleButtonMostSales.getModel().setPressed(false);
+        System.out.println("Finished");
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        Configuration conf = new Configuration();
+        Path path = new Path("/data/outputMostSales/part-r-00000");
+        FileSystem fs;
+        try {
+            fs = path.getFileSystem(conf);
+            FSDataInputStream inputStream = fs.open(path);
+            //System.out.println(inputStream.available());
+            jTextAreaResult.setText(IOUtils.toString(inputStream, "UTF-8"));
+            inputStream.close();
+            fs.close();
+        } catch (IOException ex) {
+            Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jToggleButtonMostSalesActionPerformed
 
     /**
@@ -325,7 +379,7 @@ public class MainGUI extends javax.swing.JFrame {
         //job.setCombinerClass(IntSumReducerPropertyType.class);
         job.setReducerClass(IntSumReducerPropertyType.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(LongWritable.class);
         Path output = new Path("/data/outputPropertyType");
         FileSystem hdfs = FileSystem.get(conf);
         if (hdfs.exists(output)) {
@@ -364,7 +418,7 @@ public class MainGUI extends javax.swing.JFrame {
         job.setMapperClass(TokenizerMapperCountryDistrictTown.class);
         job.setReducerClass(ReducerCountryDistrictTown.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(LongWritable.class);
         Path output = new Path("/data/outputCountryDistrictTown");
         FileSystem hdfs = FileSystem.get(conf);
         if (hdfs.exists(output)) {
@@ -404,7 +458,7 @@ public class MainGUI extends javax.swing.JFrame {
         job1.setMapperClass(TokenizerMapperMostSales.class);
         job1.setReducerClass(ReducerMostSales.class);
         job1.setOutputKeyClass(Text.class);
-        job1.setOutputValueClass(IntWritable.class);
+        job1.setOutputValueClass(LongWritable.class);
         Path output = new Path("/data/outputMostSalesTemp");
         FileSystem hdfs = FileSystem.get(conf);
         if (hdfs.exists(output)) {
@@ -542,6 +596,7 @@ public class MainGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextArea jTextAreaResult;
     private javax.swing.JTextField jTextFieldCountryF2;
     private javax.swing.JTextField jTextFieldCountryF3;

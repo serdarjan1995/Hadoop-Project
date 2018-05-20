@@ -1,24 +1,24 @@
 package hadoop.project;
 
 import java.io.IOException;
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
 public class ReducerCountryDistrictTown
-            extends Reducer<Text, IntWritable, Text, IntWritable> {
+            extends Reducer<Text, LongWritable, Text, LongWritable> {
         public ReducerCountryDistrictTown(){}
-        private IntWritable result = new IntWritable();
-        private int count = 0;
-        private IntWritable max = new IntWritable(0);
-        private IntWritable min = new IntWritable(0);
+        private LongWritable result = new LongWritable();
+        private long count = 0;
+        private LongWritable max = new LongWritable(0);
+        private LongWritable min = new LongWritable(0);
         boolean first = true;
-        public void reduce(Text key, Iterable<IntWritable> values, Context context)
+        public void reduce(Text key, Iterable<LongWritable> values, Context context)
           throws IOException, InterruptedException {
-            int sum = 0;
-            int value;
-            for (IntWritable val : values) {
+            long sum = 0;
+            long value;
+            for (LongWritable val : values) {
                 value = val.get();
                 if(first){
                     max.set(value);
@@ -37,9 +37,6 @@ public class ReducerCountryDistrictTown
                 count++;
             }
         result.set(sum/count);
-//        context.write(key, max);
-//        context.write(key, min);
-//        context.write(key, result);
         context.write(new Text(key.toString()+" Max price:"), max);
         context.write(new Text(key.toString()+" Min price:"), min);
         context.write(new Text(key.toString()+" Avg price:"), result);
