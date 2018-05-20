@@ -32,11 +32,12 @@ public class TokenizerMapperCountryDistrictTown
                         case 7: if(!town.equalsIgnoreCase(itr.nextToken())) hit=false; break;
                         case 8: if(!district.equalsIgnoreCase(itr.nextToken())) hit=false; break;
                         case 9: if(!country.equalsIgnoreCase(itr.nextToken())) hit=false; break;
+                        default: itr.nextToken();
                     }
 
                 }
                 if(hit){
-                    context.write(country+"/"+district+"/"+town, price);
+                    context.write(new Text(country+"/"+district+"/"+town), price);
                 }
           }
     }

@@ -62,6 +62,12 @@ public class MainGUI extends javax.swing.JFrame {
 
         propertyType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "D = Detached", "S = Semi-Detached", "T = Terraced", "F = Flats/Maisonettes", "O = Other" }));
 
+        jTextFieldCountry.setText("GREATER LONDON");
+
+        jTextFieldDistrict.setText("BARNET");
+
+        jTextFieldTown.setText("LONDON");
+
         jLabel1.setText("Property Type:");
 
         jLabel2.setText("Country/District/Town:");
